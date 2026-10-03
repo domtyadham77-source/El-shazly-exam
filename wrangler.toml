@@ -1,0 +1,13 @@
+name = "physics-exam"
+main = "src/worker.js"
+compatibility_date = "2025-09-01"
+
+# The page (public/index.html) is served as static files; /api/* is handled by src/worker.js
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[vars]
+# Last valid day of the subscription (YYYY-MM-DD). The site closes at the start of the next day, Cairo time.
+# To renew: change this date, then deploy again.
+LICENSE_UNTIL = "2026-10-10"
