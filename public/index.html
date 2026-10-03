@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B1B36">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<title>Mr. Mohamed El-Shazly for Physics – Exam 1 Month</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#EDF1F3; --paper:#FFFFFF; --ink:#14262E; --muted:#5B6D75; --line:#D3DCE0;
+  --blue:#1F5F8B; --blue-dark:#164866; --flag:#C98A0B; --done:#2E7D6B;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:16px}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.hidden{display:none!important}
+
+.topbar{position:sticky;top:0;z-index:10;background:var(--ink);color:#fff;display:flex;align-items:center;gap:10px;padding:10px 16px;flex-wrap:wrap}
+.topbar .title{font-weight:600;margin-right:auto}
+.timer{font-variant-numeric:tabular-nums;font-weight:600;background:rgba(255,255,255,.12);padding:6px 12px;border-radius:6px}
+.btn{border:1px solid transparent;border-radius:6px;padding:9px 16px;font-weight:500;background:var(--blue);color:#fff}
+.btn:hover{background:var(--blue-dark)}
+.btn.ghost{background:transparent;border-color:rgba(255,255,255,.4);color:#fff}
+.btn.ghost:hover{background:rgba(255,255,255,.12)}
+.btn.light{background:var(--paper);color:var(--ink);border-color:var(--line)}
+.btn.light:hover{background:#F6F9FA}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+select.jump{font:inherit;padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff}
+select.jump option{color:#000}
+
+main{max-width:760px;margin:0 auto;padding:28px 16px 130px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:28px}
+.qmeta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:14px;margin-bottom:14px}
+.flagbtn{background:none;border:1px solid var(--line);border-radius:6px;padding:6px 10px;color:var(--muted)}
+.flagbtn.on{background:#FBF1D9;border-color:var(--flag);color:#7A5200}
+.qtext{font-family:'Source Serif 4',Georgia,serif;font-size:23px;line-height:1.45;margin:0 0 24px}
+.opt{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;background:var(--paper);border:1.5px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:10px;color:var(--ink)}
+.opt:hover{border-color:var(--blue)}
+.opt .letter{flex:none;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--muted);display:grid;place-items:center;font-weight:600;font-size:14px}
+.opt.sel{border-color:var(--blue);background:#EAF3F9}
+.opt.sel .letter{background:var(--blue);border-color:var(--blue);color:#fff}
+.navrow{display:flex;justify-content:space-between;gap:10px;margin-top:20px}
+
+.drop{display:block;border:2px dashed var(--line);border-radius:10px;padding:26px;text-align:center;color:var(--muted);cursor:pointer}
+.drop:hover{border-color:var(--blue);color:var(--blue)}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:16px}
+.thumb{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fafafa}
+.thumb img{width:100%;height:150px;object-fit:cover;display:block}
+.thumb button{position:absolute;top:6px;right:6px;border:none;background:rgba(20,38,46,.85);color:#fff;border-radius:4px;padding:4px 8px;font-size:13px}
+
+.progress{position:fixed;left:0;right:0;bottom:0;background:var(--paper);border-top:1px solid var(--line);padding:12px 16px 14px;z-index:10}
+.progress .inner{max-width:760px;margin:0 auto}
+.progress .label{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:6px}
+.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--done);transition:width .3s}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px;margin:18px 0}
+.cell{height:48px;border-radius:8px;border:1.5px solid var(--line);background:var(--paper);font-weight:600;position:relative}
+.cell.done{background:var(--done);border-color:var(--done);color:#fff}
+.cell.flag::after{content:"";position:absolute;top:4px;right:4px;width:9px;height:9px;border-radius:50%;background:var(--flag);border:1.5px solid #fff}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+
+.center{max-width:520px;margin:9vh auto 0;padding:0 16px}
+.center h1{font-family:'Source Serif 4',Georgia,serif;font-size:34px;line-height:1.2;margin:0 0 12px}
+.center p{color:var(--muted);line-height:1.6}
+.rules{padding-left:20px;line-height:1.8;color:var(--ink)}
+input[type=text]{font:inherit;width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:8px;margin:6px 0 16px}
+label.f{font-weight:500;font-size:15px}
+
+@media(max-width:640px){
+  .qtext{font-size:20px}
+  .card{padding:20px}
+}
+
+table{width:100%;border-collapse:collapse;margin:14px 0}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}
+.essay-img{max-width:100%;border:1px solid var(--line);border-radius:8px;margin:8px 0}
+.badge{display:inline-block;background:#E4F2EE;color:#1D5B4D;padding:3px 10px;border-radius:12px;font-weight:600}
+
+:root{
+--bg:#0B1B36;
+--paper:#FBF7EE;
+--ink:#14262E;
+--muted:#5E6A70;
+--line:#E0D6C0;
+--blue:#1D6FE8;
+--blue-dark:#1559BD;
+--flag:#E39A0B;
+--done:#14A38B;
+--cyan:#3FD0F0;
+--amber:#FFC247
+}
+
+html,body{font-family:'Space Grotesk',system-ui,sans-serif}
+
+body{
+min-height:100vh;
+background:
+radial-gradient(1100px 650px at 12% -8%,#17397A 0%,transparent 60%),
+radial-gradient(900px 600px at 100% 100%,#102C5C 0%,transparent 55%),#0B1B36;
+background-attachment:fixed
+}
+
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+#bg svg{width:100%;height:100%;display:block}
+section,main{position:relative;z-index:1}
+
+.wire{fill:none;stroke:rgba(63,208,240,.2);stroke-width:2}
+.flow{fill:none;stroke:var(--cyan);stroke-width:4;stroke-linecap:round;stroke-dasharray:1 26;opacity:.7;animation:flow 3s linear infinite}
+
+@keyframes flow{
+to{stroke-dashoffset:-54}
+}
+
+@media (prefers-reduced-motion:reduce){
+.flow{animation:none}
+}
+
+.node{
+fill:#0B1B36;
+stroke:rgba(63,208,240,.45);
+stroke-width:2
+}
+
+.topbar{
+background:rgba(7,16,34,.82);
+backdrop-filter:blur(10px);
+-webkit-backdrop-filter:blur(10px);
+border-bottom:1px solid rgba(63,208,240,.25)
+}
+
+.timer{
+background:rgba(63,208,240,.1);
+border:1px solid rgba(63,208,240,.5);
+color:var(--cyan);
+border-radius:999px;
+padding:6px 14px;
+box-shadow:0 0 16px rgba(63,208,240,.25)
+}
+
+.btn{
+border-radius:12px;
+font-weight:600;
+background:linear-gradient(135deg,#2E86FF,#1D6FE8);
+box-shadow:0 6px 16px rgba(29,111,232,.35)
+}
+
+.btn.ghost,.btn.light{box-shadow:none}
+.btn.light{background:var(--paper)}
+
+.card{
+border:none;
+border-radius:22px;
+box-shadow:0 24px 60px rgba(0,0,0,.4)
+}
+
+.qtext{
+font-family:inherit;
+font-weight:500;
+font-size:24px;
+line-height:1.4
+}
+
+.opt{
+border-radius:14px;
+border-width:2px;
+font:inherit;
+background:#fff
+}
+
+.opt .letter{
+border-radius:10px;
+border-width:2px
+}
+
+.opt.sel{
+background:#E6F0FF;
+box-shadow:0 0 0 4px rgba(29,111,232,.16)
+}
+
+.flagbtn{border-radius:10px}
+.drop{border-radius:16px;background:#fff}
+.thumb{border-radius:12px}
+
+.center{
+background:var(--paper);
+border-radius:24px;
+padding:34px 30px;
+margin:5vh auto 40px;
+box-shadow:0 24px 60px rgba(0,0,0,.45)
+}
+
+.center h1{
+font-family:inherit;
+font-weight:700;
+letter-spacing:-.5px
+}
+
+.logo{
+display:block;
+width:60px;
+height:60px;
+color:var(--amber);
+margin-bottom:14px;
+filter:drop-shadow(0 0 10px rgba(255,194,71,.7))
+}
+
+input[type=text]{
+border-radius:12px;
+background:#fff;
+border-width:2px
+}
+
+.cell{
+border-radius:12px;
+background:#fff
+}
+
+.cell.done{background:var(--done)}
+
+.progress{
+background:rgba(7,16,34,.9);
+backdrop-filter:blur(10px);
+-webkit-backdrop-filter:blur(10px);
+border-top:1px solid rgba(63,208,240,.25)
+}
+
+.progress .label{color:#B9C8DF}
+
+.bar{
+height:12px;
+border-radius:99px;
+background:rgba(255,255,255,.12)
+}
+
+.bar span{
+border-radius:99px;
+background:linear-gradient(90deg,var(--cyan),var(--amber));
+box-shadow:0 0 14px rgba(255,194,71,.55)
+}
+
+@media(max-width:640px){
+.qtext{font-size:20px}
+.center{padding:26px 20px}
+}
+
+.card.wm{
+position:relative;
+padding-bottom:70px
+}
+
+.card.wm::after{
+content:"Mr. Mohamed El-Shazly";
+position:absolute;
+right:26px;
+bottom:16px;
+font-family:'Dancing Script','Brush Script MT',cursive;
+font-weight:600;
+font-size:32px;
+line-height:1;
+color:rgba(20,38,46,.17);
+transform:rotate(-4deg);
+transform-origin:right bottom;
+pointer-events:none;
+user-select:none;
+-webkit-user-select:none
+}
+
+.credit{
+text-align:center;
+font-size:12px;
+color:rgba(185,200,223,.75);
+margin:26px 0 0;
+letter-spacing:.2px
+}
+
+.credit.in{
+color:#8A959A;
+margin-top:26px
+}
+</style>
+  function updateProgress(){
+  const c=answeredCount();
+  $("progText").textContent=c+" of "+TOTAL+" answered";
+  const pct=Math.round(c/TOTAL*100);
+  $("progPct").textContent=pct+"%";
+  $("progBar").style.width=pct+"%";
+}
+
+function startTimer(){
+  clearInterval(tick);
+  tick=setInterval(()=>{
+    const left=Math.max(0,state.end-Date.now());
+    $("timer").textContent=fmt(left);
+    if($("timer2")) $("timer2").textContent=fmt(left);
+    if(left<=0){
+      clearInterval(tick);
+      finishExam(true);
+    }
+  },250);
+}
+
+function fmt(ms){
+  let s=Math.floor(ms/1000);
+  const h=Math.floor(s/3600);
+  s%=3600;
+  const m=Math.floor(s/60);
+  s%=60;
+  return [h,m,s].map((v,i)=>i===0?String(v).padStart(2,"0"):String(v).padStart(2,"0")).join(":");
+}
+
+function renderJump(){
+  const j=$("jump");
+  j.innerHTML="";
+  for(let i=0;i<TOTAL;i++){
+    const o=document.createElement("option");
+    o.value=i;
+    o.textContent=(i<MCQ.length?"Question ":"Written question ")+(i<MCQ.length?i+1:i-MCQ.length+1);
+    j.appendChild(o);
+  }
+  j.value=state.cur;
+}
+
+function renderQuestion(){
+  const i=state.cur;
+  const card=$("qCard");
+
+  if(i<MCQ.length){
+    const q=MCQ[i];
+    let html="";
+    html+='<div class="qmeta"><span>Question '+(i+1)+' of '+TOTAL+'</span>';
+    html+='<button class="flagbtn '+(state.flags[i]?"on":"")+'" onclick="toggleFlag('+i+')">'+
+      (state.flags[i]?"★ Flagged":"☆ Flag for review")+
+      '</button></div>';
+
+    html+='<h2 class="qtext">'+q[0]+'</h2>';
+
+    if(q[4]) html+='<div class="figure">'+q[4]+'</div>';
+
+    q[1].forEach((op,k)=>{
+      html+='<button class="opt '+(state.answers[i]===k?"sel":"")+'" onclick="choose('+i+','+k+')">';
+      html+='<span class="letter">'+String.fromCharCode(65+k)+'</span>';
+      html+='<span>'+op+'</span>';
+      html+='</button>';
+    });
+
+    card.innerHTML=html;
+  }else{
+    const ei=i-MCQ.length;
+
+    let html="";
+    html+='<div class="qmeta"><span>Written question '+(ei+1)+' of 2</span>';
+    html+='<button class="flagbtn '+(state.flags[i]?"on":"")+'" onclick="toggleFlag('+i+')">'+
+      (state.flags[i]?"★ Flagged":"☆ Flag for review")+
+      '</button></div>';
+
+    html+='<h2 class="qtext">'+ESSAY[ei]+'</h2>';
+
+    html+='<label class="drop" for="photoInput">';
+    html+='<strong>Tap here to upload a photo of your answer</strong>';
+    html+='<br><small>You can upload more than one photo.</small>';
+    html+='</label>';
+    html+='<input id="photoInput" type="file" accept="image/*" capture="environment" multiple class="hidden" onchange="handlePhotos(event,'+i+')">';
+    html+='<div class="thumbs" id="thumbs"></div>';
+
+    card.innerHTML=html;
+    renderPhotos(i);
+  }
+
+  $("prevBtn").disabled=i===0;
+  $("prevTop").disabled=i===0;
+
+  const last=i===TOTAL-1;
+  $("nextBtn").textContent=last?"Review & finish":"Next question";
+  $("nextTop").textContent=last?"Review & finish":"Next question";
+
+  $("jump").value=i;
+  updateProgress();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function choose(i,k){
+  state.answers[i]=k;
+  renderQuestion();
+}
+
+function toggleFlag(i){
+  state.flags[i]=!state.flags[i];
+  renderQuestion();
+}
+
+function renderPhotos(i){
+  const wrap=$("thumbs");
+  if(!wrap)return;
+
+  wrap.innerHTML="";
+
+  const arr=state.photos[i]||[];
+
+  arr.forEach((p,k)=>{
+    const d=document.createElement("div");
+    d.className="thumb";
+
+    if(p.status==="failed"){
+      d.innerHTML='<div style="padding:20px;color:#b00020">Photo could not be loaded</div>'+
+        '<button onclick="removePhoto('+i+','+k+')">Remove</button>';
+    }else{
+      d.innerHTML='<img src="'+p.data+'" alt="Uploaded answer">'+
+        '<button onclick="removePhoto('+i+','+k+')">Remove</button>';
+    }
+
+    wrap.appendChild(d);
+  });
+}
+
+function handlePhotos(e,i){
+  const files=[...e.target.files];
+  if(!state.photos[i]) state.photos[i]=[];
+
+  files.forEach(file=>{
+    const reader=new FileReader();
+
+    reader.onload=ev=>{
+      state.photos[i].push({
+        name:file.name,
+        data:ev.target.result,
+        status:"ok"
+      });
+      renderPhotos(i);
+      updateProgress();
+    };
+
+    reader.onerror=()=>{
+      state.photos[i].push({
+        name:file.name,
+        data:"",
+        status:"failed"
+      });
+      renderPhotos(i);
+      updateProgress();
+    };
+
+    reader.readAsDataURL(file);
+  });
+
+  e.target.value="";
+}
+
+function removePhoto(i,k){
+  state.photos[i].splice(k,1);
+  renderPhotos(i);
+  updateProgress();
+}
+
+function goQuestion(i){
+  if(i<0||i>=TOTAL)return;
+  state.cur=i;
+  renderQuestion();
+}
+
+$("jump").addEventListener("change",e=>{
+  goQuestion(Number(e.target.value));
+});
+
+$("prevBtn").addEventListener("click",()=>{
+  if(state.cur>0){
+    state.cur--;
+    renderQuestion();
+  }
+});
+
+$("prevTop").addEventListener("click",()=>{
+  if(state.cur>0){
+    state.cur--;
+    renderQuestion();
+  }
+});
+
+$("nextBtn").addEventListener("click",()=>{
+  if(state.cur<TOTAL-1){
+    state.cur++;
+    renderQuestion();
+  }else{
+    openReview();
+  }
+});
+
+$("nextTop").addEventListener("click",()=>{
+  if(state.cur<TOTAL-1){
+    state.cur++;
+    renderQuestion();
+  }else{
+    openReview();
+  }
+});
+
+$("reviewTop").addEventListener("click",openReview);
+
+function openReview(){
+  renderReview();
+  show("reviewScreen");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function renderReview(){
+  const c=answeredCount();
+
+  $("reviewSummary").textContent=
+    c+" of "+TOTAL+" questions answered";
+
+  const grid=$("reviewGrid");
+  grid.innerHTML="";
+
+  for(let i=0;i<TOTAL;i++){
+    const b=document.createElement("button");
+    b.className="cell";
+
+    if(isAnswered(i)) b.classList.add("done");
+    if(state.flags[i]) b.classList.add("flag");
+
+    b.textContent=i<MCQ.length?i+1:"W"+(i-MCQ.length+1);
+
+    b.onclick=()=>{
+      state.cur=i;
+      renderQuestion();
+      show("examScreen");
+    };
+
+    grid.appendChild(b);
+  }
+
+  updateProgress();
+}
+
+$("backToExam").addEventListener("click",()=>{
+  show("examScreen");
+  renderQuestion();
+});
+
+$("submitBtn").addEventListener("click",()=>{
+  const missing=[];
+
+  for(let i=0;i<MCQ.length;i++){
+    if(!isAnswered(i)) missing.push(i+1);
+  }
+
+  if(missing.length){
+    alert("Please answer all multiple choice questions before submitting.\nMissing: "+missing.join(", "));
+    return;
+  }
+
+  if(!confirm("Are you sure you want to submit the exam?")) return;
+
+  finishExam(false);
+});
+
+function calculateScore(){
+  let correct=0;
+
+  for(let i=0;i<MCQ.length;i++){
+    if(state.answers[i]===MCQ[i][2]) correct++;
+  }
+
+  return {
+    correct,
+    total:MCQ.length
+  };
+}
+
+function finishExam(timeUp){
+  if(state.finished)return;
+
+  state.finished=true;
+  clearInterval(tick);
+
+  const score=calculateScore();
+
+  const submission={
+    name:state.name,
+    num:state.num,
+    phone:state.phone,
+    cls:state.cls,
+    correct:score.correct,
+    total:score.total,
+    time:new Date().toLocaleString(),
+    leaves:state.leaves,
+    answers:Object.assign({},state.answers),
+    flags:Object.assign({},state.flags),
+    photos:state.photos,
+    timeUp:timeUp
+  };
+
+  state.submission=submission;
+
+  state.roster.push(submission);
+  saveRoster();
+
+  $("doneTitle").textContent=
+    timeUp?"Time is up":"Thank you for your attempt";
+
+  $("doneNote").textContent=
+    timeUp
+      ?"The exam time has ended and your answers were submitted automatically."
+      :"Your answers have been submitted successfully.";
+
+  const box=$("resultBox");
+  box.classList.remove("hidden");
+  box.innerHTML=
+    '<div class="badge">'+score.correct+" / "+score.total+" correct</div>";
+
+  show("doneScreen");
+}
+
+$("startBtn").addEventListener("click",()=>{
+  const name=$("stName").value.trim();
+  const num=$("stNum").value.trim();
+  const phone=$("stPhone").value.trim();
+  const cls=$("stClass").value;
+
+  $("stErr").textContent="";
+
+  if(!name||!num||!phone||!cls){
+    $("stErr").textContent="Please complete all fields.";
+    return;
+  }
+
+  state.name=name;
+  state.num=num;
+  state.phone=phone;
+  state.cls=cls;
+
+  show("warnScreen");
+});
+
+$("beginBtn").addEventListener("click",()=>{
+  state.end=Date.now()+EXAM_MS;
+  state.finished=false;
+  state.cur=0;
+  state.answers={};
+  state.flags={};
+  state.photos={[MCQ.length]:[],[MCQ.length+1]:[]};
+  state.leaves=0;
+
+  show("examScreen");
+  renderJump();
+  renderQuestion();
+  startTimer();
+});
+
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden && !state.finished && !$("examScreen").classList.contains("hidden")){
+    state.leaves++;
+  }
+});
+
+$("tabStudent").addEventListener("click",()=>setTab("student"));
+$("tabTeacher").addEventListener("click",()=>setTab("teacher"));
+
+$("tBtn").addEventListener("click",()=>{
+  const pass=$("tPass").value;
+
+  /*
+    Teacher password
+    Change this value if you want another password.
+  */
+  if(pass==="1234"){
+    $("tErr").textContent="";
+    show("adminScreen");
+    renderRoster();
+  }else{
+    $("tErr").textContent="Incorrect password.";
+  }
+});
+
+$("clsFilter").addEventListener("change",renderRoster);
+
+$("closeAdmin").addEventListener("click",()=>{
+  $("tPass").value="";
+  show("teacherLogin");
+});
+
+function renderRoster(){
+  const body=$("adminRows");
+  const essays=$("adminEssays");
+
+  body.innerHTML="";
+  essays.innerHTML="";
+
+  const filter=$("clsFilter").value;
+
+  const rows=state.roster.filter(r=>!filter||r.cls===filter);
+
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="7">No submissions yet.</td></tr>';
+    return;
+  }
+
+  rows.forEach((r,idx)=>{
+    const tr=document.createElement("tr");
+
+    tr.innerHTML=
+      "<td>"+esc(r.name)+"</td>"+
+      "<td>"+esc(r.cls)+"</td>"+
+      "<td>"+r.correct+" / "+r.total+"</td>"+
+      "<td>"+esc(r.phone)+"</td>"+
+      "<td>"+esc(r.num)+"</td>"+
+      "<td>"+r.leaves+"</td>"+
+      "<td>"+esc(r.time)+"</td>";
+
+    body.appendChild(tr);
+
+    const box=document.createElement("div");
+    box.style.margin="20px 0";
+    box.style.padding="16px";
+    box.style.border="1px solid var(--line)";
+    box.style.borderRadius="12px";
+    box.style.background="#fff";
+
+    let h="<strong>"+esc(r.name)+"</strong> — "+esc(r.cls);
+    h+="<div style='margin-top:12px'>";
+
+    [MCQ.length,MCQ.length+1].forEach(i=>{
+      const arr=(r.photos&&r.photos[i])||[];
+
+      h+="<div style='margin-top:12px'><b>Written question "+(i-MCQ.length+1)+"</b>";
+
+      if(!arr.length){
+        h+="<p style='color:var(--muted)'>No photo uploaded.</p>";
+      }else{
+        h+='<div class="thumbs">';
+
+        arr.forEach(p=>{
+          if(p.status!=="failed"){
+            h+='<div class="thumb"><img src="'+p.data+'" alt="Student answer"></div>';
+          }
+        });
+
+        h+="</div>";
+      }
+
+      h+="</div>";
+    });
+
+    h+="</div>";
+
+    box.innerHTML=h;
+    essays.appendChild(box);
+  });
+}
+
+function esc(v){
+  return String(v??"")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function addSamples(){
+  const samples=[
+    {
+      name:"Ahmed Mohamed Ali",
+      num:"1001",
+      phone:"01000000001",
+      cls:"First Secondary",
+      correct:5,
+      total:7,
+      time:new Date().toLocaleString(),
+      leaves:0,
+      answers:{},
+      flags:{},
+      photos:{},
+      timeUp:false
+    },
+    {
+      name:"Omar Ahmed Hassan",
+      num:"1002",
+      phone:"01000000002",
+      cls:"Second Secondary",
+      correct:6,
+      total:7,
+      time:new Date().toLocaleString(),
+      leaves:1,
+      answers:{},
+      flags:{},
+      photos:{},
+      timeUp:false
+    }
+  ];
+
+  state.roster=state.roster.concat(samples);
+  saveRoster();
+  renderRoster();
+}
+
+function downloadReport(){
+  const filter=$("clsFilter").value;
+  const rows=state.roster.filter(r=>!filter||r.cls===filter);
+
+  if(!rows.length){
+    alert("No results to download.");
+    return;
+  }
+
+  let html=
+    '<html><head><meta charset="UTF-8">'+
+    '<title>Students Results</title>'+
+    '<style>body{font-family:Arial;padding:30px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:8px;text-align:left}</style>'+
+    '</head><body>'+
+    '<h1>Students Results</h1>'+
+    '<table><tr><th>Student</th><th>Class</th><th>Score</th><th>Phone</th><th>Number</th><th>Left page</th><th>Submitted</th></tr>';
+
+  rows.forEach(r=>{
+    html+="<tr>"+
+      "<td>"+esc(r.name)+"</td>"+
+      "<td>"+esc(r.cls)+"</td>"+
+      "<td>"+r.correct+" / "+r.total+"</td>"+
+      "<td>"+esc(r.phone)+"</td>"+
+      "<td>"+esc(r.num)+"</td>"+
+      "<td>"+r.leaves+"</td>"+
+      "<td>"+esc(r.time)+"</td>"+
+      "</tr>";
+  });
+
+  html+="</table></body></html>";
+
+  const w=window.open("","_blank");
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>w.print(),500);
+}
+
+async function shareReport(){
+  const filter=$("clsFilter").value;
+  const rows=state.roster.filter(r=>!filter||r.cls===filter);
+
+  if(!rows.length){
+    alert("No results to share.");
+    return;
+  }
+
+  let text="Students Results\n\n";
+
+  rows.forEach(r=>{
+    text+=
+      r.name+" | "+
+      r.cls+" | "+
+      r.correct+"/"+r.total+" | "+
+      r.phone+" | "+
+      r.num+"\n";
+  });
+
+  if(navigator.share){
+    try{
+      await navigator.share({
+        title:"Students Results",
+        text:text
+      });
+    }catch(e){}
+  }else{
+    await navigator.clipboard.writeText(text);
+    alert("Report copied to clipboard.");
+  }
+}
+
+/* ===== initialize ===== */
+function init(){
+  show("startScreen");
+
+  $("tabStudent").classList.add("on");
+  $("tabTeacher").classList.remove("on");
+
+  $("nTotal")?.replaceChildren(document.createTextNode(TOTAL));
+  document.querySelectorAll(".nTotal").forEach(x=>x.textContent=TOTAL);
+  document.querySelectorAll(".nMcq").forEach(x=>x.textContent=MCQ.length);
+
+  renderJump();
+}
+
+init();
+</script>
+</body>
+</html>
